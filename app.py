@@ -1,209 +1,442 @@
 import streamlit as st
 import random
-from datetime import datetime
-
-st.set_page_config(page_title="ECE Paraprofessional III — Monday Exam Prep", page_icon="🎓", layout="wide")
-
-st.markdown("""
-<style>
-.block-container {max-width: 1050px; padding-top: 1.5rem;}
-.big-title {font-size: 2.3rem; font-weight: 800;}
-.subtitle {font-size: 1.1rem;}
-</style>
-""", unsafe_allow_html=True)
-
-QUESTIONS = [
-# Child Development
-("Child Development","Preschoolers generally learn best through:",["Hands-on play","Long lectures","Worksheets only","Silent independent work"],0,"Your study sheet says preschoolers learn best through hands-on play."),
-("Child Development","When supporting development, the best principle is to:",["Judge children against one another","Support development without judging it","Expect identical development","Ignore developmental differences"],1,"The study sheet states: Support development, don't judge it."),
-("Child Development","Which is described as a typical preschool skill in your study material?",["Following 2–3 step directions","Reading college textbooks","Driving independently","Managing a classroom"],0,"Following 2–3 step directions is listed among typical preschool skills."),
-("Child Development","A possible developmental red flag listed in the study material is:",["No pretend play","Enjoying play","Showing emotions","Beginning cooperative play"],0,"No pretend play is one of the listed red flags."),
-("Child Development","A child develops at a different pace. What is the best approach based on the study material?",["Judge the child","Support the child's development","Compare the child publicly","Ignore the difference"],1,"The key principle is to support development, not judge it."),
-# Behavior
-("Behavior Support","A child is upset. Which response best matches the study guide?",["Yell","Validate feelings","Threaten punishment","Ignore the child"],1,"The guide recommends validating feelings."),
-("Behavior Support","A child refuses an activity. Which strategy is recommended?",["Offer choices","Shame the child","Yell","Punish harshly"],0,"Offering choices can increase cooperation."),
-("Behavior Support","A child is disrupting the classroom. What should you do?",["Redirect calmly","Yell","Threaten","Embarrass the child"],0,"The scenario pattern says: Disruption → redirect calmly."),
-("Behavior Support","Which approach should be avoided?",["Positive reinforcement","Calm redirection","Shaming or threatening","Offering choices"],2,"The guide says never shame, threaten, yell, or punish harshly."),
-("Behavior Support","A behavior plan is in place. You should:",["Follow it exactly","Change it yourself","Ignore it","Invent a different plan"],0,"The study guide says to follow behavior plans exactly."),
-("Behavior Support","Which is an example of positive reinforcement?",["'I like how you're cleaning up.'","'You're always bad.'","'Stop or else.'","'Everyone is better than you.'"],0,"The study sheet gives positive feedback about cleaning up as an example."),
-("Behavior Support","A child is upset. A helpful statement is:",["'Stop crying.'","'I see you're upset. I'm here to help.'","'You're making everyone angry.'","'Go away.'"],1,"This is the example of validating feelings in the study sheet."),
-# Safety
-("Safety & Supervision","Active supervision means:",["Move, scan, and know where every child is","Stay seated","Watch only one child","Wait for problems"],0,"The study guide defines active supervision this way."),
-("Safety & Supervision","On a playground, the paraprofessional should:",["Stay mobile and prevent risky behavior","Use a phone","Stay in one place","Let children supervise each other"],0,"The guide emphasizes mobility and prevention of risky behavior."),
-("Safety & Supervision","In an emergency, the paraprofessional should:",["Follow protocol and notify the teacher immediately","Invent a new procedure","Wait","Diagnose the situation"],0,"That is the emergency guidance in the study sheet."),
-("Safety & Supervision","The study guide says a paraprofessional should never:",["Diagnose or give medication","Supervise","Use precautions","Follow protocol"],0,"The material specifically says never diagnose or give medication."),
-("Safety & Supervision","For bodily fluids, the study guide recommends:",["Using gloves","Ignoring them","Touching them directly","Waiting for a child to clean them"],0,"Universal precautions include gloves and sanitation."),
-("Safety & Supervision","If you notice a safety problem, your first priority should be:",["Ensure safety","Finish paperwork","Ignore it","Wait until later"],0,"The quick scenario pattern begins with ensuring safety."),
-# IEP
-("Special Education & IEPs","An IEP is described as a:",["Legal document","Suggestion only","Optional note","Classroom decoration"],0,"The study sheet identifies an IEP as a legal document."),
-("Special Education & IEPs","IEP accommodations should be:",["Followed exactly","Changed whenever convenient","Ignored","Rewritten by the paraprofessional"],0,"The guide says to follow accommodations exactly."),
-("Special Education & IEPs","If an IEP instruction is unclear, you should:",["Ask the teacher","Guess","Ignore it","Ask another child"],0,"The guide says to ask the teacher if unclear."),
-("Special Education & IEPs","Inclusion means:",["Supporting the child in the general classroom","Removing the child automatically","Ignoring accommodations","Replacing the teacher"],0,"That matches the study guide's definition."),
-("Special Education & IEPs","Confidentiality is:",["Mandatory","Optional","Only for administrators","Not important"],0,"The study material says confidentiality is mandatory."),
-("Special Education & IEPs","You should reinforce:",["Specialist strategies","Personal opinions","Unapproved changes","Rumors"],0,"The guide says to reinforce specialist strategies."),
-# Professionalism
-("Communication & Professionalism","The recommended communication tone is:",["Calm, respectful, professional","Loud and threatening","Sarcastic","Dismissive"],0,"The professionalism section emphasizes calm, respectful, professional communication."),
-("Communication & Professionalism","If you need clarification, you should:",["Ask for clarification","Guess","Ignore the task","Ask a child"],0,"The study guide says to ask for clarification when needed."),
-("Communication & Professionalism","A paraprofessional should protect:",["Confidentiality","Gossip","Private opinions","Rumors"],0,"Protecting confidentiality is emphasized."),
-("Communication & Professionalism","Which quality is specifically recommended?",["Reliable and punctual","Unpredictable","Frequently late","Unprepared"],0,"The guide says to be consistent, reliable, and punctual."),
-("Communication & Professionalism","A paraprofessional should maintain:",["Professional boundaries","No boundaries","Personal conflicts","Private investigations"],0,"Maintaining boundaries is listed under professionalism."),
-# Classroom
-("Classroom Support","A paraprofessional may:",["Support small groups","Replace the teacher","Create legal requirements","Diagnose children"],0,"Supporting small groups is a listed responsibility."),
-("Classroom Support","A paraprofessional reinforces:",["Teacher instruction","Personal teaching plans","Rumors","Unapproved rules"],0,"The guide says to reinforce teacher instruction."),
-("Classroom Support","Which is a classroom-support responsibility?",["Help with transitions","Replace the teacher","Ignore routines","Diagnose children"],0,"Helping with transitions is specifically listed."),
-("Classroom Support","A paraprofessional should encourage:",["Independence","Dependence","Fear","Shame"],0,"Encouraging independence is one of the core responsibilities."),
-("Classroom Support","The key role principle is:",["You assist — you don't replace the teacher","You replace the teacher","You work without direction","You make all classroom decisions"],0,"This is the key principle in the study sheet."),
-("Classroom Support","Which areas may a paraprofessional support?",["Literacy, math, play, and routines","Only discipline","Only paperwork","Only lunch"],0,"Those areas are specifically listed."),
-# Core
-("Core Principles","What comes first in the 10 Core Rules?",["Safety first","Offer choices","Validate feelings","Encourage independence"],0,"Safety first is Rule #1."),
-("Core Principles","Which is one of the 10 Core Rules?",["Protect confidentiality","Punish harshly","Yell","Ignore safety"],0,"Protect confidentiality is one of the core rules."),
-("Core Principles","Which response is recommended for disruption?",["Redirect calmly","Yell","Threaten","Shame"],0,"Redirect calmly."),
-("Core Principles","Which response is recommended for refusal?",["Offer choices","Punish","Yell","Ignore"],0,"Offer choices."),
-("Core Principles","Which response is recommended when a child is upset?",["Validate feelings","Dismiss feelings","Yell","Threaten"],0,"Validate feelings."),
-("Core Principles","If unsure, the scenario pattern says to:",["Ask the teacher","Guess","Ignore the issue","Ask a child"],0,"Unsure → ask the teacher."),
-# Scenarios
-("Scenario Practice","A child begins unsafe behavior on the playground. What is the best first action?",["Ensure safety","Start paperwork","Ignore it","Wait"],0,"Safety comes first."),
-("Scenario Practice","A child refuses to clean up. What is the best approach?",["Offer choices and encourage cooperation","Yell","Shame","Threaten"],0,"Refusal → offer choices."),
-("Scenario Practice","A child cries after becoming frustrated. What is the best response?",["Validate feelings and offer help","Tell the child to stop","Punish","Ignore"],0,"Upset → validate feelings."),
-("Scenario Practice","A behavior plan gives a specific strategy. What should you do?",["Follow the plan","Replace it with your own","Ignore it","Change it without direction"],0,"Behavior plan → follow exactly."),
-("Scenario Practice","You are unsure how to carry out an IEP accommodation. What should you do?",["Ask the teacher","Guess","Ignore it","Ask a student"],0,"Confusion → ask the teacher."),
-("Scenario Practice","A classroom disruption begins. Which response best fits the study pattern?",["Redirect calmly","Yell loudly","Threaten punishment","Shame the child"],0,"Disruption → redirect calmly."),
-]
-
-CORE_RULES = [
-"Safety first.","Follow teacher direction.","Use positive reinforcement.","Redirect calmly.",
-"Offer choices.","Validate feelings.","Follow IEP accommodations.","Protect confidentiality.",
-"Use active supervision.","Encourage independence."
-]
-CONFIDENCE = ["I stay calm.","I follow the plan.","I keep children safe.","I support the teacher.","I know what I'm doing."]
-
-def start_exam(n=25):
-    st.session_state.exam_questions = random.sample(QUESTIONS, min(n, len(QUESTIONS)))
-    st.session_state.exam_i = 0
-    st.session_state.exam_score = 0
-    st.session_state.exam_answered = False
-    st.session_state.exam_selected = None
-    st.session_state.exam_wrong = []
-    st.session_state.exam_started = True
-
-def start_topic(domain, n=10):
-    pool = [q for q in QUESTIONS if q[0] == domain]
-    st.session_state.exam_questions = random.sample(pool, min(n, len(pool)))
-    st.session_state.exam_i = 0
-    st.session_state.exam_score = 0
-    st.session_state.exam_answered = False
-    st.session_state.exam_selected = None
-    st.session_state.exam_wrong = []
-    st.session_state.exam_started = True
-
-if "exam_started" not in st.session_state:
-    st.session_state.exam_started=False
-
-st.title("🎓 ECE Paraprofessional III — Exam Prep")
-st.markdown("### Monday Evening Exam • Inglewood, California")
-st.caption("Practice tool based on your uploaded ECE Paraprofessional III study materials. It does not reproduce actual exam questions.")
-
-tabs=st.tabs(["🏠 Home","📚 Study","📝 Practice Exam","🎯 Scenarios","💪 Exam-Day Mode"])
-
-with tabs[0]:
-    st.markdown("## Your goal: be calm, prepared, and consistent.")
-    st.info("The most important scenario pattern: **Safety → Calm → Validate → Redirect → Follow plan.**")
-    st.success("Use the app tonight for practice. Monday, use Exam-Day Mode for a short warm-up.")
-    st.markdown("### Recommended plan")
-    st.write("**Tonight:** Study → 25-question practice exam → review mistakes → repeat weak topics.")
-    st.write("**Monday:** 15–20 question warm-up → review Core Rules → Confidence Booster → exam.")
-    st.markdown("### Six core areas")
-    for x in ["Child Development","Behavior Support","Safety & Supervision","Special Education & IEPs","Communication & Professionalism","Classroom Support"]:
-        st.write("• "+x)
-
-with tabs[1]:
-    st.header("📚 Focused Study Guide")
-    study = {
-        "Child Development":["Hands-on play supports preschool learning.","Typical skills include following 2–3 step directions, simple sentences, big emotions, and beginning cooperative play.","Support development; don't judge it."],
-        "Behavior Support":["Use positive reinforcement.","Redirect unsafe or disruptive behavior calmly.","Validate feelings.","Offer choices.","Follow behavior plans exactly.","Never shame, threaten, yell, or punish harshly."],
-        "Safety & Supervision":["Move, scan, and know where every child is.","Stay mobile on the playground.","Use universal precautions such as gloves and sanitation.","Follow emergency protocol and notify the teacher immediately.","Never diagnose or give medication."],
-        "Special Education & IEPs":["An IEP is a legal document.","Follow accommodations exactly.","Ask the teacher if unclear.","Reinforce specialist strategies.","Support inclusion in the general classroom.","Protect confidentiality."],
-        "Communication & Professionalism":["Use a calm, respectful, professional tone.","Follow teacher direction.","Ask for clarification when needed.","Maintain boundaries.","Protect confidentiality.","Be consistent, reliable, and punctual."],
-        "Classroom Support":["Support small groups.","Reinforce teacher instruction.","Help with transitions.","Encourage independence.","Model behavior.","Prepare materials as instructed.","Support literacy, math, play, and routines.","You assist — you don't replace the teacher."]
-    }
-    for title, bullets in study.items():
-        with st.expander(title, expanded=False):
+st.set_page_config(page_title="California ECE Practice", page_icon="🌴", layout="wide")
+QUESTIONS=[{'domain': 'Approaches to Learning',
+  'question': 'A child tries several ways to finish a puzzle before asking for help.',
+  'options': ['Persistence', 'Memorization', 'Avoidance', 'Compliance only'],
+  'answer': 0,
+  'explanation': 'Persistence is a key approach-to-learning behavior.'},
+ {'domain': 'Approaches to Learning',
+  'question': 'A child independently chooses materials and begins a project.',
+  'options': ['Initiative', 'Dependence', 'Punishment avoidance', 'Passive observation'],
+  'answer': 0,
+  'explanation': 'Independent engagement shows initiative.'},
+ {'domain': 'Approaches to Learning',
+  'question': 'A child becomes distracted during a small-group activity. Best support?',
+  'options': ['Use a brief prompt to help the child re-engage', 'Publicly criticize the child', 'Remove all choices', 'End the activity'],
+  'answer': 0,
+  'explanation': 'Supportive prompting builds attention without shaming.'},
+ {'domain': 'Approaches to Learning',
+  'question': 'When an activity becomes difficult, the best response is to:',
+  'options': ['Encourage effort and offer appropriate support',
+              'Complete it for the child',
+              'Tell the child to quit',
+              'Compare the child with peers'],
+  'answer': 0,
+  'explanation': 'Persistence grows when adults support effort and problem-solving.'},
+ {'domain': 'Approaches to Learning',
+  'question': 'Which feedback best supports learning?',
+  'options': ['You kept trying even when that was hard.', "You're the smartest.", 'You never make mistakes.', 'Only fast answers matter.'],
+  'answer': 0,
+  'explanation': 'Process-focused feedback supports persistence.'},
+ {'domain': 'Social & Emotional Development',
+  'question': 'Two children want the same truck. Best adult response?',
+  'options': ['Coach them to express needs and work out turns',
+              'Take it away all day',
+              'Choose a favorite child',
+              'Tell them feelings do not matter'],
+  'answer': 0,
+  'explanation': 'Coaching supports social problem-solving.'},
+ {'domain': 'Social & Emotional Development',
+  'question': "A child says, 'I'm mad because he knocked down my blocks.' This shows:",
+  'options': ['Emotional awareness', 'Counting', 'Letter knowledge', 'Gross motor skill'],
+  'answer': 0,
+  'explanation': 'Naming a feeling and its cause shows emotional awareness.'},
+ {'domain': 'Social & Emotional Development',
+  'question': 'Which question best supports empathy?',
+  'options': ['How do you think your friend felt?', 'Who is the fastest?', 'What color is that?', 'Can you copy this?'],
+  'answer': 0,
+  'explanation': 'Perspective-taking supports empathy.'},
+ {'domain': 'Social & Emotional Development',
+  'question': 'A shy child watches a group before joining. Best support?',
+  'options': ['Offer a low-pressure way to enter play',
+              'Force immediate participation',
+              'Label the child antisocial',
+              'Send the child away'],
+  'answer': 0,
+  'explanation': 'Gentle entry respects temperament and encourages participation.'},
+ {'domain': 'Social & Emotional Development',
+  'question': 'A child is frustrated by a drawing. Best response?',
+  'options': ['Acknowledge the feeling and encourage another attempt',
+              'Throw the drawing away',
+              'Say frustration is silly',
+              "Compare with another child's work"],
+  'answer': 0,
+  'explanation': 'Emotion coaching supports regulation.'},
+ {'domain': 'Language, Literacy & English Language Development',
+  'question': 'Which activity best supports phonological awareness?',
+  'options': ["Clapping syllables in children's names", 'Copying paragraphs', 'Tracing shapes only', 'Counting blocks'],
+  'answer': 0,
+  'explanation': 'Sound play supports phonological awareness.'},
+ {'domain': 'Language, Literacy & English Language Development',
+  'question': "While reading, an adult asks, 'What do you think will happen next?' This supports:",
+  'options': ['Comprehension and oral language', 'Gross motor strength', 'Self-feeding', 'Color recognition only'],
+  'answer': 0,
+  'explanation': 'Prediction supports comprehension and language.'},
+ {'domain': 'Language, Literacy & English Language Development',
+  'question': 'A child makes letter-like marks for a pretend grocery list. This is:',
+  'options': ['Emergent writing', 'Formal algebra', 'Gross motor development', 'Scientific measurement'],
+  'answer': 0,
+  'explanation': 'Early writing attempts are part of emergent writing.'},
+ {'domain': 'Language, Literacy & English Language Development',
+  'question': 'A multilingual child uses a home-language word during play. Best response?',
+  'options': ['Value the communication and connect it to English naturally',
+              'Ban the home language',
+              'Ignore the child',
+              'Correct harshly'],
+  'answer': 0,
+  'explanation': 'Home language is an asset for communication and learning.'},
+ {'domain': 'Language, Literacy & English Language Development',
+  'question': 'Which strategy best supports a child learning English?',
+  'options': ['Use visuals, gestures, routines, and meaningful conversation',
+              'Demand perfect grammar first',
+              'Avoid peer interaction',
+              'Stop home-language use'],
+  'answer': 0,
+  'explanation': 'Multiple supports make language accessible.'},
+ {'domain': 'Language, Literacy & English Language Development',
+  'question': "An adult expands 'Dog run' to 'Yes, the brown dog is running fast.' This supports:",
+  'options': ['Language expansion', 'Punishment', 'Number sense', 'Motor planning'],
+  'answer': 0,
+  'explanation': 'Expansion models richer vocabulary and grammar.'},
+ {'domain': 'Mathematics',
+  'question': "A child counts five blocks and says 'five' for the total. This demonstrates:",
+  'options': ['Cardinality', 'Rhyming', 'Empathy', 'Balance'],
+  'answer': 0,
+  'explanation': 'The last number counted tells how many are in the set.'},
+ {'domain': 'Mathematics',
+  'question': 'Which activity best supports classification?',
+  'options': ['Sorting buttons by shape or size', 'Running outside', 'Reciting a poem', 'Painting freely'],
+  'answer': 0,
+  'explanation': 'Classification groups objects by shared attributes.'},
+ {'domain': 'Mathematics',
+  'question': 'A child continues red-blue-red-blue with another red block. This shows:',
+  'options': ['Patterning', 'Self-help', 'Narrative skill', 'Phonological awareness'],
+  'answer': 0,
+  'explanation': 'The child recognizes and extends a repeating pattern.'},
+ {'domain': 'Mathematics',
+  'question': 'Children compare two towers to see which is taller. This supports:',
+  'options': ['Measurement concepts', 'Rhyming', 'Emotional labeling', 'Print awareness'],
+  'answer': 0,
+  'explanation': 'Comparing height is early measurement.'},
+ {'domain': 'Mathematics',
+  'question': 'Which is most developmentally appropriate for early math?',
+  'options': ['Hands-on counting with real objects',
+              'Timed multiplication tests',
+              'Abstract algebra worksheets',
+              'Long written calculation drills'],
+  'answer': 0,
+  'explanation': 'Concrete experiences support early mathematical understanding.'},
+ {'domain': 'Science',
+  'question': 'Children place ice in sun and shade and observe what happens. This supports:',
+  'options': ['Observation and comparison', 'Rhyming', 'Letter formation', 'Turn-taking only'],
+  'answer': 0,
+  'explanation': 'Children compare change under different conditions.'},
+ {'domain': 'Science',
+  'question': 'Which question best encourages scientific thinking?',
+  'options': ['What do you notice about these two leaves?',
+              'What answer did I tell you?',
+              'Can you copy this sentence?',
+              'Who finished first?'],
+  'answer': 0,
+  'explanation': 'Open observation questions support inquiry.'},
+ {'domain': 'Science',
+  'question': 'A child predicts which objects will sink before testing them. This demonstrates:',
+  'options': ['Prediction and investigation', 'Phonics', 'Dance', 'Self-care'],
+  'answer': 0,
+  'explanation': 'Prediction followed by testing is scientific inquiry.'},
+ {'domain': 'Science',
+  'question': "When a child's prediction is incorrect, the adult should:",
+  'options': ['Treat the result as useful evidence and discuss it', 'Say the child failed', 'End the experiment', 'Change the result'],
+  'answer': 0,
+  'explanation': 'Science learning grows from comparing predictions with evidence.'},
+ {'domain': 'Science',
+  'question': 'Magnet activity: best next step after noticing some objects stick?',
+  'options': ['Test and sort more objects', 'Stop and give the answer', 'Remove materials', 'Turn it into spelling'],
+  'answer': 0,
+  'explanation': 'Further testing extends inquiry.'},
+ {'domain': 'Physical Development',
+  'question': 'Which activity most directly supports gross-motor development?',
+  'options': ['Running, jumping, and balancing', 'Turning book pages', 'Stringing beads', 'Drawing small circles'],
+  'answer': 0,
+  'explanation': 'Large-muscle movement builds gross-motor skill.'},
+ {'domain': 'Physical Development',
+  'question': 'Which activity most directly supports fine-motor development?',
+  'options': ['Using tongs to move small objects', 'Running a relay', 'Jumping', 'Climbing stairs'],
+  'answer': 0,
+  'explanation': 'Tongs build hand and finger control.'},
+ {'domain': 'Physical Development',
+  'question': 'A child is learning to use scissors. Best support?',
+  'options': ['Provide child-safe scissors, model, and supervise', 'Give sharp adult scissors', 'Do all cutting', 'Forbid practice'],
+  'answer': 0,
+  'explanation': 'Safe guided practice supports skill and independence.'},
+ {'domain': 'Physical Development',
+  'question': 'Which practice supports children with varied physical abilities?',
+  'options': ['Offer adapted materials and multiple ways to participate',
+              'Use one activity with no modifications',
+              'Exclude children who move differently',
+              'Compare publicly'],
+  'answer': 0,
+  'explanation': 'Inclusive adaptations support participation.'},
+ {'domain': 'Physical Development',
+  'question': 'Balance beams, hopping games, and obstacle paths mainly support:',
+  'options': ['Balance and coordination', 'Narrative comprehension', 'Number symbols', 'Vocabulary only'],
+  'answer': 0,
+  'explanation': 'These activities build body control and coordination.'},
+ {'domain': 'Health',
+  'question': 'Best way to reduce spread of many classroom germs?',
+  'options': ['Teach and model effective handwashing', 'Share cups', 'Skip cleaning', 'Use one towel for everyone'],
+  'answer': 0,
+  'explanation': 'Consistent hygiene routines reduce transmission.'},
+ {'domain': 'Health',
+  'question': 'Which practice best supports healthy eating habits?',
+  'options': ['Offer varied nutritious foods without forcing', 'Require a clean plate', 'Use food as punishment', 'Shame preferences'],
+  'answer': 0,
+  'explanation': 'Responsive feeding supports healthy attitudes.'},
+ {'domain': 'Health',
+  'question': 'A child coughs into their hands before touching shared materials. Best response?',
+  'options': ['Remind about cough hygiene and handwashing', 'Embarrass the child', 'Ignore it', 'Remove the child permanently'],
+  'answer': 0,
+  'explanation': 'Calm reminders teach health routines.'},
+ {'domain': 'Health',
+  'question': 'Why are consistent toileting and handwashing routines useful?',
+  'options': ['They support health, independence, and predictable self-care',
+              'They replace supervision',
+              'They are only for older children',
+              'They eliminate all need for help'],
+  'answer': 0,
+  'explanation': 'Predictable routines build health habits and self-help.'},
+ {'domain': 'Health',
+  'question': 'Possible health concern: best general response?',
+  'options': ['Follow site procedures and notify appropriate staff',
+              'Diagnose the child yourself',
+              'Give medication without authorization',
+              'Post it publicly'],
+  'answer': 0,
+  'explanation': 'Health concerns should follow established procedures.'},
+ {'domain': 'History–Social Science',
+  'question': 'A classroom job chart mainly helps children learn about:',
+  'options': ['Roles and responsibility in a community', 'Phoneme segmentation', 'Measurement', 'Gross motor control'],
+  'answer': 0,
+  'explanation': 'Classroom jobs build understanding of community roles.'},
+ {'domain': 'History–Social Science',
+  'question': 'Which activity supports understanding of past and present?',
+  'options': ['Comparing baby photos with current photos', 'Sorting shapes', 'Clapping syllables', 'Jumping patterns'],
+  'answer': 0,
+  'explanation': 'Comparing earlier and current experiences builds time concepts.'},
+ {'domain': 'History–Social Science',
+  'question': "Books reflecting children's families and communities support:",
+  'options': ['Identity and understanding of diverse communities', 'Only number sense', 'Only physical strength', 'Only print direction'],
+  'answer': 0,
+  'explanation': 'Representation connects learning to family and community.'},
+ {'domain': 'History–Social Science',
+  'question': 'Which activity introduces simple geography?',
+  'options': ['Using a classroom map to locate familiar areas', 'Memorizing state capitals', 'Completing algebra', 'Copying paragraphs'],
+  'answer': 0,
+  'explanation': 'Maps of familiar spaces build spatial understanding.'},
+ {'domain': 'History–Social Science',
+  'question': 'Children vote between two class songs. This introduces:',
+  'options': ['Group decision-making', 'Phonological awareness', 'Fine-motor control', 'Scientific measurement'],
+  'answer': 0,
+  'explanation': 'Voting introduces shared decision-making.'},
+ {'domain': 'Visual & Performing Arts',
+  'question': 'In open-ended art, the adult should generally:',
+  'options': ['Emphasize exploration and process', 'Require identical products', 'Correct every color choice', 'Finish the work'],
+  'answer': 0,
+  'explanation': 'Open-ended art supports creativity and expression.'},
+ {'domain': 'Visual & Performing Arts',
+  'question': 'Which activity best supports dramatic play?',
+  'options': ['Props for a pretend grocery store', 'Copying a worksheet', 'Timed counting', 'Silent sitting'],
+  'answer': 0,
+  'explanation': 'Props and role play support imagination and language.'},
+ {'domain': 'Visual & Performing Arts',
+  'question': 'Children move scarves to music. This integrates:',
+  'options': ['Music, movement, and creative expression', 'Only mathematics', 'Only writing', 'Only health'],
+  'answer': 0,
+  'explanation': 'Movement to music supports creative expression.'},
+ {'domain': 'Visual & Performing Arts',
+  'question': 'When a child explains a painting, best response?',
+  'options': ['Listen and invite the child to describe ideas',
+              'Tell the child what it must mean',
+              'Correct imagination',
+              "Compare it with another child's work"],
+  'answer': 0,
+  'explanation': 'Inviting explanation supports expression and language.'},
+ {'domain': 'Visual & Performing Arts',
+  'question': 'Which material best encourages creative construction?',
+  'options': ['Blocks, fabric, boxes, and loose parts', 'Only worksheets', 'Only multiple-choice cards', 'Only pencils'],
+  'answer': 0,
+  'explanation': 'Open-ended materials support design and creativity.'},
+ {'domain': 'Professional Practice & Inclusion',
+  'question': 'Which observation note is most objective?',
+  'options': ['Mia left the carpet three times during the 10-minute activity.',
+              'Mia was badly behaved.',
+              'Mia did not care about learning.',
+              'Mia wanted to cause trouble.'],
+  'answer': 0,
+  'explanation': 'Objective notes describe observable actions, not motives.'},
+ {'domain': 'Professional Practice & Inclusion',
+  'question': 'A child with a disability participates in a group. Best support?',
+  'options': ['Provide needed access while encouraging participation and independence',
+              'Automatically exclude the child',
+              'Do everything for the child',
+              'Lower all expectations'],
+  'answer': 0,
+  'explanation': 'Inclusive support balances access and independence.'},
+ {'domain': 'Professional Practice & Inclusion',
+  'question': 'When giving assistance, best general principle?',
+  'options': ['Provide the least help needed for successful participation',
+              'Always do the task',
+              'Never help',
+              'Use identical help for every child'],
+  'answer': 0,
+  'explanation': 'Appropriate scaffolding supports competence.'},
+ {'domain': 'Professional Practice & Inclusion',
+  'question': 'Which interaction is culturally responsive?',
+  'options': ['Learn about families and use respectful representation',
+              'Assume all families are the same',
+              'Avoid family languages',
+              'Use stereotypes'],
+  'answer': 0,
+  'explanation': 'Responsive practice values family, language, and community.'},
+ {'domain': 'Professional Practice & Inclusion',
+  'question': "A parent asks about another child's behavior. Best response?",
+  'options': ["Protect the other child's privacy", 'Share details', 'Show records', 'Ask children to explain'],
+  'answer': 0,
+  'explanation': 'Professional practice includes confidentiality.'},
+ {'domain': 'Professional Practice & Inclusion',
+  'question': 'A child struggles with a routine. Before assuming defiance, the adult should:',
+  'options': ['Observe possible causes and provide support', 'Use a negative label', 'Punish immediately', 'Compare to peers'],
+  'answer': 0,
+  'explanation': 'Observation is more useful than assumptions.'},
+ {'domain': 'California ECE Scenario Challenge',
+  'question': 'A child keeps grabbing materials from peers. Best first teaching response?',
+  'options': ['Move close, state the expectation calmly, and coach requesting or waiting',
+              'Yell across the room',
+              'Label the child selfish',
+              'Remove the child all day'],
+  'answer': 0,
+  'explanation': 'Calm coaching teaches a replacement social skill.'},
+ {'domain': 'California ECE Scenario Challenge',
+  'question': 'A child learning English watches but does not speak during a song. Best response?',
+  'options': ['Allow observation, model gestures, and invite participation without pressure',
+              'Require a solo',
+              'Assume no understanding',
+              'Exclude the child'],
+  'answer': 0,
+  'explanation': 'Low-pressure entry and visual support encourage participation.'},
+ {'domain': 'California ECE Scenario Challenge',
+  'question': 'Two children disagree about which object will float. Best response?',
+  'options': ['Invite both predictions and test the object',
+              "Choose the older child's answer",
+              'Tell them disagreement is bad',
+              'End the activity'],
+  'answer': 0,
+  'explanation': 'Testing predictions turns disagreement into inquiry.'},
+ {'domain': 'California ECE Scenario Challenge',
+  'question': 'A child can zip most of a coat but struggles with the first step. Best support?',
+  'options': ['Help with the first step, then let the child continue',
+              'Zip the whole coat every time',
+              'Tell the child to stop trying',
+              'Ask another child to do it'],
+  'answer': 0,
+  'explanation': 'Partial assistance preserves independence.'},
+ {'domain': 'California ECE Scenario Challenge',
+  'question': 'While documenting an incident, which note is best?',
+  'options': ["At 10:15, Leo pushed the red truck away and said, 'My turn,' while Ava held it.",
+              'Leo was aggressive again.',
+              'Leo was trying to be mean.',
+              'Leo never behaves.'],
+  'answer': 0,
+  'explanation': 'Objective documentation records observable actions and words.'}]
+DOMAINS=sorted(set(q["domain"] for q in QUESTIONS))
+STUDY={
+"Approaches to Learning":["Support initiative, persistence, attention, flexible problem-solving, self-regulation, and collaboration.","Use accessible materials and meaningful choices.","Give process-focused feedback about effort and strategy."],
+"Social & Emotional Development":["Support emotional awareness, self-regulation, empathy, peer interaction, cooperation, and relationships.","Coach social problems rather than shame children."],
+"Language, Literacy & English Language Development":["Use conversation, read-alouds, songs, sound play, meaningful print, emergent writing, and retelling.","Support multilingual learners with visuals, gestures, routines, conversation, and respect for home language."],
+"Mathematics":["Use concrete experiences with counting, quantity, classification, patterns, shapes, measurement, and reasoning.","Ask children to explain how they know."],
+"Science":["Encourage observation, prediction, testing, comparison, questioning, and discussion of evidence.","Use real materials and open-ended investigations."],
+"Physical Development":["Provide safe opportunities for large- and small-muscle development, balance, coordination, and adapted participation.","Support increasing independence."],
+"Health":["Teach healthy routines such as handwashing, cough hygiene, self-care, and safe eating practices.","Follow program procedures for health concerns."],
+"History–Social Science":["Explore family, community, roles, responsibility, time, place, maps, and group decision-making.","Represent diverse families and communities respectfully."],
+"Visual & Performing Arts":["Use open-ended art, dramatic play, music, movement, and creative materials.","Emphasize exploration and expression over identical products."],
+"Professional Practice & Inclusion":["Document objectively; describe what you see and hear, not motives.","Use inclusion, scaffolding, confidentiality, culturally responsive practice, and strength-based feedback."]
+}
+for key,val in {"qs":[],"i":0,"score":0,"answered":False,"selected":None,"wrong":[]}.items():
+    if key not in st.session_state: st.session_state[key]=val
+def start(pool,n):
+    n=min(n,len(pool)); st.session_state.qs=random.sample(pool,n)
+    st.session_state.i=0; st.session_state.score=0; st.session_state.answered=False
+    st.session_state.selected=None; st.session_state.wrong=[]
+st.title("🌴 California ECE Practice")
+st.caption("New California-focused practice app. Original questions aligned to current PTKLF themes; not an official state, district, or testing-vendor exam.")
+home,study,practice,scenario,review=st.tabs(["🏠 Home","📚 California Study","📝 Practice Tests","🎯 Scenario Challenge","✅ Final Review"])
+with home:
+    st.header("California-focused ECE preparation")
+    st.write("This version replaces the earlier app based on your uploaded study sheets.")
+    st.info("Recommended: California Study → 50-question mixed test → Scenario Challenge → review mistakes.")
+    for d in DOMAINS: st.write("• "+d)
+with study:
+    st.header("📚 California ECE Study Guide")
+    for title,bullets in STUDY.items():
+        with st.expander(title):
             for b in bullets: st.write("• "+b)
-    st.subheader("🧠 10 Core Rules")
-    for i,r in enumerate(CORE_RULES,1): st.write(f"{i}. {r}")
-
-with tabs[2]:
-    st.header("📝 Practice Exam")
-    st.write("Choose a mode, then answer one question at a time.")
+with practice:
+    st.header("📝 Practice Tests")
     c1,c2,c3=st.columns(3)
-    if c1.button("25-Question Exam", type="primary"): start_exam(25); st.rerun()
-    if c2.button("50-Question Exam"): start_exam(50); st.rerun()
-    if c3.button("100-Question Exam"): start_exam(100); st.rerun()
-    domain=st.selectbox("Or practice one topic", sorted(set(q[0] for q in QUESTIONS)))
-    if st.button("Start Topic Practice"): start_topic(domain,10); st.rerun()
-
-    if st.session_state.exam_started:
-        qs=st.session_state.exam_questions; i=st.session_state.exam_i
-        if i < len(qs):
-            q=qs[i]
-            st.progress(i/len(qs))
-            st.write(f"**Question {i+1} of {len(qs)} • {q[0]}**")
-            st.subheader(q[1])
-            selected=st.radio("Choose one:",q[2],index=None,key=f"choice_{i}")
-            if not st.session_state.exam_answered:
+    if c1.button("20-Question Warm-Up",type="primary"): start(QUESTIONS,20); st.rerun()
+    if c2.button("50-Question Mixed Test"): start(QUESTIONS,50); st.rerun()
+    if c3.button("Full Question Bank"): start(QUESTIONS,len(QUESTIONS)); st.rerun()
+    domain=st.selectbox("Or practice one area",DOMAINS)
+    if st.button("Start Topic Practice"):
+        pool=[q for q in QUESTIONS if q["domain"]==domain]; start(pool,len(pool)); st.rerun()
+    if st.session_state.qs:
+        qs=st.session_state.qs; i=st.session_state.i
+        if i<len(qs):
+            q=qs[i]; st.progress(i/len(qs)); st.write(f"**Question {i+1} of {len(qs)} • {q['domain']}**")
+            st.subheader(q["question"])
+            opts=q["options"][:]; random.Random(i+777).shuffle(opts)
+            sel=st.radio("Choose the best answer:",opts,index=None,key=f"ans_{i}")
+            if not st.session_state.answered:
                 if st.button("Submit Answer",type="primary"):
-                    if selected is None: st.warning("Select an answer first.")
+                    if sel is None: st.warning("Select an answer first.")
                     else:
-                        st.session_state.exam_selected=q[2].index(selected)
-                        st.session_state.exam_answered=True
-                        if st.session_state.exam_selected==q[3]: st.session_state.exam_score+=1
-                        else: st.session_state.exam_wrong.append(q)
+                        st.session_state.selected=sel; st.session_state.answered=True
+                        if sel==q["options"][q["answer"]]: st.session_state.score+=1
+                        else: st.session_state.wrong.append(q)
                         st.rerun()
             else:
-                if st.session_state.exam_selected==q[3]: st.success("✅ Correct!")
-                else:
-                    st.error("❌ Review this one.")
-                    st.write("**Correct answer:** "+q[2][q[3]])
-                st.info(q[4])
+                correct=q["options"][q["answer"]]
+                if st.session_state.selected==correct: st.success("✅ Correct")
+                else: st.error("❌ Review this one"); st.write("**Best answer:** "+correct)
+                st.info(q["explanation"])
                 if st.button("Next Question",type="primary"):
-                    st.session_state.exam_i+=1; st.session_state.exam_answered=False; st.session_state.exam_selected=None; st.rerun()
+                    st.session_state.i+=1; st.session_state.answered=False; st.session_state.selected=None; st.rerun()
         else:
-            total=len(qs); pct=round(st.session_state.exam_score/total*100)
-            st.success(f"Finished! **{st.session_state.exam_score}/{total} ({pct}%)**")
-            if pct>=90: st.balloons(); st.success("Excellent preparation.")
-            elif pct>=80: st.success("Strong preparation. Review missed questions.")
-            else: st.warning("Review the weak areas and take another practice set.")
-            if st.session_state.exam_wrong:
-                st.subheader("Review your missed questions")
-                for q in st.session_state.exam_wrong:
-                    st.write("• "+q[1])
-            if st.button("Start Another Exam"): start_exam(25); st.rerun()
-
-with tabs[3]:
-    st.header("🎯 Scenario Practice")
-    st.markdown("### Memorize this pattern")
-    st.info("**Unsafe → ensure safety**  |  **Upset → validate feelings**  |  **Refusal → offer choices**  |  **Disruption → redirect calmly**  |  **IEP → follow exactly**  |  **Unsure → ask the teacher**")
-    st.subheader("Quick scenarios")
-    scenario_q=[q for q in QUESTIONS if q[0]=="Scenario Practice"]
-    for q in scenario_q:
-        with st.expander(q[1]):
-            st.write("**Best answer:** "+q[2][q[3]])
-            st.write(q[4])
-
-with tabs[4]:
-    st.header("💪 Monday Exam-Day Mode")
-    st.warning("Keep this short. The goal is calm focus, not cramming.")
-    st.subheader("1. Reset your breathing — 20 seconds")
-    st.write("Inhale 4 seconds → hold 2 → exhale 6. Repeat twice.")
-    st.subheader("2. Say these five lines out loud")
-    for x in CONFIDENCE: st.write("• "+x)
-    st.subheader("3. Recall the 10 Core Rules")
-    for i,r in enumerate(CORE_RULES,1): st.write(f"{i}. {r}")
-    st.subheader("4. Last-minute scenario pattern")
-    st.success("Safety → Calm → Validate → Redirect → Follow plan")
-    st.subheader("5. Final mindset")
-    st.success("**“I’m prepared. I’m steady. I’m ready.”**")
-    st.caption("Your uploaded Morning-Of checklist recommends quiet confidence, relaxed shoulders, and one deep breath before entering the test.")
-
+            total=len(qs); pct=round(st.session_state.score/total*100)
+            st.success(f"Score: {st.session_state.score}/{total} ({pct}%)")
+            if pct>=90: st.balloons(); st.success("Excellent.")
+            elif pct>=80: st.success("Strong. Review missed concepts.")
+            else: st.warning("Review missed concepts, then try another set.")
+            if st.session_state.wrong:
+                st.subheader("Missed questions")
+                for q in st.session_state.wrong: st.write("• "+q["question"])
+with scenario:
+    st.header("🎯 California ECE Scenario Challenge")
+    for q in [x for x in QUESTIONS if x["domain"]=="California ECE Scenario Challenge"]:
+        with st.expander(q["question"]):
+            st.write("**Best answer:** "+q["options"][q["answer"]]); st.write(q["explanation"])
+with review:
+    st.header("✅ Final Review")
+    st.markdown("""
+- Choose **developmentally appropriate, respectful, and inclusive** responses.
+- Prefer **teaching and scaffolding** over punishment or taking over.
+- Use **objective observation**, not labels or assumptions.
+- Encourage **independence** while giving needed support.
+- Treat **home language, family, culture, and abilities as assets**.
+- Favor **play, conversation, inquiry, real materials, and active participation**.
+- On hard questions, choose the answer that best supports **learning, dignity, participation, and development**.
+""")
+    st.success("Read carefully and choose the BEST answer.")
 st.divider()
-st.caption("Practice content derived from the uploaded ECE Paraprofessional III study materials. This is a study aid, not an official exam or answer key.")
+st.caption("Independent study aid based on current California ECE/PTKLF themes. Not affiliated with CDE, IUSD, or a testing vendor.")

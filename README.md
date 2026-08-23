@@ -1,16 +1,30 @@
-# ECE Paraprofessional III — Monday Exam Prep
+# California ECE Practice
 
-A Streamlit practice app for the Paraprofessional III – Early Childhood Education exam.
+A GitHub-ready Streamlit study app focused on current California early childhood education themes.
 
-## What it includes
-- Focused study guide
-- 25-, 50-, and 100-question randomized practice exams
+## Included
+- California ECE study guide
+- 20-question warm-up
+- 50-question mixed test
+- Full question-bank test
 - Topic practice
-- Scenario practice
-- Explanations for answers
+- Scenario Challenge
+- Immediate answer explanations
 - Missed-question review
-- Monday Exam-Day Mode
-- Two-minute confidence routine
+- Final Review
+
+## Upload to GitHub
+1. Create a repository such as `California-ECE-Practice`.
+2. Upload `app.py`, `requirements.txt`, `README.md`, and `.gitignore`.
+3. Commit the files.
+
+## Deploy with Streamlit Community Cloud
+1. Sign in with GitHub.
+2. Create a new app.
+3. Select your repository.
+4. Branch: `main`
+5. Main file: `app.py`
+6. Deploy.
 
 ## Run locally
 ```bash
@@ -18,14 +32,4 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-## Deploy with Streamlit Community Cloud
-1. Upload `app.py`, `requirements.txt`, and `README.md` to a GitHub repository.
-2. Sign in at https://share.streamlit.io/ with GitHub.
-3. Click Create app.
-4. Select your repository, branch `main`, and file `app.py`.
-5. Click Deploy.
-
-The app will receive a `streamlit.app` web address.
-
-## Important
-This app is a study aid based on supplied preparation materials. It does not reproduce or claim to predict actual examination questions.
+This is an independent study aid with original practice questions. It is not an official California Department of Education, Inglewood Unified School District, or testing-vendor examination.
