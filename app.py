@@ -549,17 +549,196 @@ def widget(q,i):
     val=st.radio("Choose one:",opts,index=None,key=f"r_{i}")
     return [] if val is None else [val]
 
+
+def render_active_quiz(key_prefix="quiz"):
+    if not st.session_state.run:
+        return
+    qs=st.session_state.run
+    i=st.session_state.i
+    if i<len(qs):
+        q=qs[i]
+        st.progress(i/len(qs))
+        st.write(f"**{st.session_state.label} • Question {i+1} of {len(qs)} • {q['section']}**")
+        st.caption({"mc":"Multiple Choice","multi":"Select All That Apply","tf":"True / False"}[q["type"]])
+
+        opts=q["options"][:]
+        random.Random(i+9000+len(q["question"])).shuffle(opts)
+        if q["type"]=="multi":
+            selected=st.multiselect("Select ALL answers that apply:",opts,key=f"{key_prefix}_m_{i}")
+        else:
+            val=st.radio("Choose one:",opts,index=None,key=f"{key_prefix}_r_{i}")
+            selected=[] if val is None else [val]
+
+        if not st.session_state.answered:
+            if st.button("Submit",type="primary",key=f"{key_prefix}_submit_{i}"):
+                if not selected:
+                    st.warning("Choose an answer first.")
+                else:
+                    st.session_state.selected=selected
+                    if set(selected)==set(q["answers"]):
+                        st.session_state.score+=1
+                    else:
+                        st.session_state.wrong.append(q)
+                    st.session_state.answered=True
+                    st.rerun()
+        else:
+            if set(st.session_state.selected)==set(q["answers"]):
+                st.success("✅ Correct")
+            else:
+                st.error("❌ Review this one")
+                st.write("**Correct answer(s):** "+", ".join(q["answers"]))
+            st.info(q["why"])
+            if st.button("Next",type="primary",key=f"{key_prefix}_next_{i}"):
+                st.session_state.i+=1
+                st.session_state.answered=False
+                st.session_state.selected=[]
+                st.rerun()
+    else:
+        total=len(qs)
+        pct=round(st.session_state.score/total*100)
+        st.success(f"Score: {st.session_state.score}/{total} — {pct}%")
+        if pct>=90:
+            st.balloons()
+            st.success("Excellent.")
+        elif pct>=80:
+            st.success("Strong. Review missed topics.")
+        else:
+            st.warning("Review weak areas, then try again.")
+        if st.session_state.wrong:
+            counts={}
+            for q in st.session_state.wrong:
+                counts[q["section"]]=counts.get(q["section"],0)+1
+            st.subheader("Weak-area summary")
+            for k,v in sorted(counts.items(),key=lambda x:-x[1]):
+                st.write(f"• **{k}:** {v} missed")
+
 st.title("🎓 Inglewood IUSD Paraprofessional III — ECE Exam Prep")
 st.caption("Targeted independent study app using original practice questions. Not an official IUSD or eSkill assessment.")
 
-tabs=st.tabs(["🏠 Home","🎯 What to Focus On","📚 Study Guide","📝 Mock Exams","🧠 Topic Practice","🎯 Scenario Challenge","➗ Reading/Writing/Math","✅ Final Review"])
-home,focus,study,tests,topics,scenario,academic,final=tabs
+tabs=st.tabs(["🏠 Home","📅 Recommended Plan","🎯 What to Focus On","📚 Study Guide","📝 Mock Exams","🧠 Topic Practice","🎯 Scenario Challenge","➗ Reading/Writing/Math","✅ Final Review"])
+home,plan,focus,study,tests,topics,scenario,academic,final=tabs
 
 with home:
     st.header("Targeted to the current IUSD Paraprofessional III – ECE posting")
     st.write("This version combines California PTKLF, DRDP, CLASS, ASQ/ASQ-SE concepts, safe preschool supervision, professional judgment, and reading/writing/mathematics practice.")
     st.info("Suggested order: **Study Guide → Mock Exam 1 → review weak areas → Scenario Challenge → Mock Exam 2 → Final Review**.")
     st.warning("The actual district/eSkill assessment can be customized. These are original practice questions, not leaked or official exam questions.")
+
+
+
+with plan:
+    st.header("📅 Recommended Plan: Now Through Monday Evening")
+    st.write("Use this as your study roadmap. The goal is to identify weak areas, fix them, and avoid over-studying right before the exam.")
+
+    st.table({
+        "When":[
+            "Sunday afternoon","Sunday afternoon","Sunday afternoon",
+            "Sunday evening","Sunday evening","Sunday evening",
+            "Monday morning","Monday morning",
+            "Monday afternoon","Monday afternoon",
+            "Before exam","Before exam","Final 30–60 min"
+        ],
+        "App section":[
+            "🎯 What to Focus On","📚 Study Guide","📝 Mock Exam 1",
+            "Review Mock Exam 1 mistakes","🎯 Scenario Challenge","🧠 Topic Practice",
+            "➗ Reading/Writing/Math","🧠 Weak Topic Practice",
+            "📝 Mock Exam 2","Review mistakes only",
+            "✅ Final Review","20-question Final Warm-Up","Stop studying"
+        ],
+        "Suggested time":[
+            "30–40 min","45–60 min","45–60 min",
+            "30–45 min","30–40 min","30–45 min",
+            "45–60 min","20–30 min",
+            "45–60 min","20–30 min",
+            "15–20 min","20–30 min","—"
+        ],
+        "Goal":[
+            "Understand how exam questions work","Learn PTKLF, DRDP, CLASS, ASQ/ASQ-SE","Establish a baseline",
+            "Identify weak areas","Practice BEST/FIRST decisions","Work only on weak areas",
+            "Refresh academic skills","Fix remaining ECE gaps",
+            "Final full practice","Correct misunderstandings",
+            "Refresh key rules","Light confidence check","Reset and prepare"
+        ]
+    })
+
+    st.subheader("Sunday: learn first, then test yourself")
+    st.markdown("""
+1. Start with **🎯 What to Focus On** and memorize the decision sequence:  
+   **Safety → Stay calm → Protect dignity → Teach/support → Follow procedure → Document objectively**
+2. Review **📚 Study Guide**, especially:
+   - PTKLF = what children are learning/developing
+   - DRDP = developmental progress
+   - CLASS = classroom interactions
+   - ASQ = developmental screening
+   - ASQ-SE = social-emotional screening
+   - Screening ≠ diagnosis
+3. Take **Mock Exam 1** without looking up answers.
+4. Use your score to decide what to review:
+   - **90%+** → move on; don't over-study easy material.
+   - **80–89%** → review only missed questions.
+   - **Below 80%** → use Topic Practice on weak categories before another full test.
+""")
+
+    st.subheader("Sunday evening: prioritize scenarios")
+    st.markdown("""
+For each scenario, ask:
+1. **Is anyone in immediate danger?** → Safety first.
+2. **Is the child upset or behaving inappropriately?** → Stay calm, acknowledge/support, teach a replacement behavior.
+3. **Does it involve private information?** → Protect confidentiality.
+4. **Does it involve an IEP, medication, health, emergency, or program procedure?** → Don't guess; follow the authorized plan/procedure.
+5. **Does it require documentation?** → Write what you saw/heard, not what you think the child intended.
+""")
+
+    st.subheader("Monday morning: Reading/Writing/Math")
+    st.markdown("""
+Use the **➗ Reading/Writing/Math** section.
+
+**Reading:** main idea, sequence, what happened first, supported statements, reasonable conclusions.  
+**Writing:** grammar, spelling, punctuation, clear professional sentences, objective documentation.  
+**Math:** addition/subtraction, multiplication/division, fractions, percentages, ratios, money, elapsed time.
+
+Examples:
+- 24 crayons ÷ 6 children = **4 each**
+- 9/12 = **75%**
+- 16 children : 4 adults = **4:1**
+- 10:15–10:40 = **25 minutes**
+""")
+
+    st.subheader("Monday afternoon: simulate the exam")
+    st.markdown("""
+Take **Mock Exam 2** and slow down for words like:
+- **FIRST**
+- **BEST**
+- **MOST appropriate**
+- **Select ALL that apply**
+- **According to the passage**
+
+Then review **only what you missed**. If several misses are in one area, use Topic Practice for that area rather than immediately retaking a full exam.
+""")
+
+    st.subheader("Last 1–2 hours before the exam")
+    st.markdown("""
+1. Read **✅ Final Review** once.
+2. Take the **20-question Final Warm-Up**.
+3. If you score **80%+**, stop doing full practice tests.
+4. During the final **30–60 minutes**, stop studying and prepare your computer, charger, internet, ID, camera, microphone, browser, and testing space.
+""")
+
+    st.subheader("12 things to remember when the exam begins")
+    st.markdown("""
+1. **FIRST = immediate priority.**
+2. **Immediate danger = safety first.**
+3. **BEST = developmentally appropriate + respectful + professional.**
+4. **Behavior problem = teach a replacement behavior.**
+5. **Child struggling = scaffold; don't automatically take over.**
+6. **Observation = what I saw/heard, not what I assume.**
+7. **Confidential information = protect it.**
+8. **IEP/medication/safety/procedure = don't guess.**
+9. **DRDP = developmental progress.**
+10. **CLASS = classroom interactions.**
+11. **ASQ = developmental screening; ASQ-SE = social-emotional screening.**
+12. **Screening does NOT equal diagnosis.**
+""")
 
 
 with focus:
@@ -709,42 +888,7 @@ with tests:
     if c2.button("Mock Exam 2 — 40 New Random Questions"): start(QUESTIONS,"Mock Exam 2",40); st.rerun()
     if c3.button("Final Warm-Up — 20 Questions"): start(QUESTIONS,"Final Warm-Up",20); st.rerun()
 
-    if st.session_state.run:
-        qs=st.session_state.run; i=st.session_state.i
-        if i<len(qs):
-            q=qs[i]
-            st.progress(i/len(qs))
-            st.write(f"**{st.session_state.label} • Question {i+1} of {len(qs)} • {q['section']}**")
-            st.caption({"mc":"Multiple Choice","multi":"Select All That Apply","tf":"True / False"}[q["type"]])
-            st.subheader(q["question"])
-            selected=widget(q,i)
-            if not st.session_state.answered:
-                if st.button("Submit",type="primary"):
-                    if not selected: st.warning("Choose an answer first.")
-                    else:
-                        st.session_state.selected=selected
-                        if set(selected)==set(q["answers"]): st.session_state.score+=1
-                        else: st.session_state.wrong.append(q)
-                        st.session_state.answered=True; st.rerun()
-            else:
-                if set(st.session_state.selected)==set(q["answers"]): st.success("✅ Correct")
-                else:
-                    st.error("❌ Review this one")
-                    st.write("**Correct answer(s):** "+", ".join(q["answers"]))
-                st.info(q["why"])
-                if st.button("Next",type="primary"):
-                    st.session_state.i+=1; st.session_state.answered=False; st.session_state.selected=[]; st.rerun()
-        else:
-            total=len(qs); pct=round(st.session_state.score/total*100)
-            st.success(f"Score: {st.session_state.score}/{total} — {pct}%")
-            if pct>=90: st.balloons(); st.success("Excellent.")
-            elif pct>=80: st.success("Strong. Review missed topics.")
-            else: st.warning("Use Topic Practice on your weakest areas, then retest.")
-            if st.session_state.wrong:
-                counts={}
-                for q in st.session_state.wrong: counts[q["section"]]=counts.get(q["section"],0)+1
-                st.subheader("Weak-area summary")
-                for k,v in sorted(counts.items(),key=lambda x:-x[1]): st.write(f"• **{k}:** {v} missed")
+    render_active_quiz("mock")
 
 with topics:
     st.header("🧠 Topic Practice")
@@ -765,12 +909,41 @@ with scenario:
 with academic:
     st.header("➗ Reading, Writing & Mathematics")
     st.write("The current IUSD posting specifically states proficiency in reading, writing, and mathematics up to or above the level required for high-school seniors.")
-    for sec in ["Reading","Writing & Grammar","Mathematics"]:
-        pool=[q for q in QUESTIONS if q["section"]==sec]
-        st.subheader(sec)
-        st.write(f"Practice questions available: **{len(pool)}**")
-        if st.button(f"Practice {sec}",key="btn_"+sec):
-            start(pool,sec); st.rerun()
+
+    st.info("Recommended Monday-morning focus: **Reading → Writing & Grammar → Mathematics**. Practice practical fundamentals rather than advanced material.")
+
+    c1,c2,c3=st.columns(3)
+    reading_pool=[q for q in QUESTIONS if q["section"]=="Reading"]
+    writing_pool=[q for q in QUESTIONS if q["section"]=="Writing & Grammar"]
+    math_pool=[q for q in QUESTIONS if q["section"]=="Mathematics"]
+
+    with c1:
+        st.subheader("📖 Reading")
+        st.write(f"Questions: **{len(reading_pool)}**")
+        st.caption("Main idea, sequence, supported statements, reasonable conclusions.")
+        if st.button("Practice Reading",key="btn_reading",type="primary"):
+            start(reading_pool,"Reading Practice")
+            st.rerun()
+
+    with c2:
+        st.subheader("✍️ Writing & Grammar")
+        st.write(f"Questions: **{len(writing_pool)}**")
+        st.caption("Grammar, spelling, punctuation, clarity, professional documentation.")
+        if st.button("Practice Writing & Grammar",key="btn_writing"):
+            start(writing_pool,"Writing & Grammar Practice")
+            st.rerun()
+
+    with c3:
+        st.subheader("➗ Mathematics")
+        st.write(f"Questions: **{len(math_pool)}**")
+        st.caption("Arithmetic, fractions, percentages, ratios, money, elapsed time.")
+        if st.button("Practice Mathematics",key="btn_math"):
+            start(math_pool,"Mathematics Practice")
+            st.rerun()
+
+    if st.session_state.run and st.session_state.label in ["Reading Practice","Writing & Grammar Practice","Mathematics Practice"]:
+        st.divider()
+        render_active_quiz("academic")
 
 with final:
     st.header("✅ Final Review")

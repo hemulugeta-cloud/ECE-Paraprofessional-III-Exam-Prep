@@ -39,3 +39,6 @@ streamlit run app.py
 - 50% ECE/scenario questions
 - 25% PTKLF + DRDP/CLASS/ASQ
 - 25% reading/writing/math
+
+## Fix in this version
+The Reading, Writing & Grammar, and Mathematics practice buttons now open and render their practice questions directly inside the academic tab.
