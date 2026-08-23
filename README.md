@@ -34,3 +34,8 @@ If your Streamlit deployment already uses the same repository and `app.py`, comm
 pip install -r requirements.txt
 streamlit run app.py
 ```
+
+## Recommended study split
+- 50% ECE/scenario questions
+- 25% PTKLF + DRDP/CLASS/ASQ
+- 25% reading/writing/math

@@ -552,14 +552,139 @@ def widget(q,i):
 st.title("🎓 Inglewood IUSD Paraprofessional III — ECE Exam Prep")
 st.caption("Targeted independent study app using original practice questions. Not an official IUSD or eSkill assessment.")
 
-tabs=st.tabs(["🏠 Home","📚 Study Guide","📝 Mock Exams","🧠 Topic Practice","🎯 Scenario Challenge","➗ Reading/Writing/Math","✅ Final Review"])
-home,study,tests,topics,scenario,academic,final=tabs
+tabs=st.tabs(["🏠 Home","🎯 What to Focus On","📚 Study Guide","📝 Mock Exams","🧠 Topic Practice","🎯 Scenario Challenge","➗ Reading/Writing/Math","✅ Final Review"])
+home,focus,study,tests,topics,scenario,academic,final=tabs
 
 with home:
     st.header("Targeted to the current IUSD Paraprofessional III – ECE posting")
     st.write("This version combines California PTKLF, DRDP, CLASS, ASQ/ASQ-SE concepts, safe preschool supervision, professional judgment, and reading/writing/mathematics practice.")
     st.info("Suggested order: **Study Guide → Mock Exam 1 → review weak areas → Scenario Challenge → Mock Exam 2 → Final Review**.")
     st.warning("The actual district/eSkill assessment can be customized. These are original practice questions, not leaked or official exam questions.")
+
+
+with focus:
+    st.header("🎯 What to Focus On Before the Exam")
+    st.info("Suggested study-time split: **50% ECE/scenario questions • 25% PTKLF + DRDP/CLASS/ASQ • 25% reading/writing/math**")
+
+    st.subheader("1. Scenario Questions — Highest-Value Practice")
+    st.write("When a question asks **FIRST**, **BEST**, or **MOST appropriate**, use this decision sequence:")
+    st.success("**Safety → Stay calm → Protect dignity → Teach/support → Follow the authorized plan/procedure → Document objectively**")
+    st.markdown("""
+- **Safety:** If anyone faces an immediate hazard, address it first.
+- **Stay calm:** Use a calm voice and professional behavior; avoid yelling, threatening, or overreacting.
+- **Protect dignity:** Do not shame, label, embarrass, or publicly discuss private information.
+- **Teach/support:** Help the child learn an appropriate replacement behavior rather than only punishing the mistake.
+- **Follow procedure:** Follow teacher direction and authorized IEP/behavior, health, safety, emergency, and medication procedures.
+- **Document objectively:** Record what you actually saw and heard, not your opinion about motives.
+""")
+    with st.expander("Example: FIRST means immediate priority"):
+        st.write("**Situation:** A preschooler runs toward an open gate leading to a parking lot.")
+        st.write("**Best FIRST action:** Immediately intervene to keep the child safe.")
+        st.caption("Documentation and investigation may come later. Immediate danger makes safety the first priority.")
+
+    st.subheader("2. Behavior Questions")
+    st.write("Do not automatically choose punishment. Look for the answer that **teaches the missing or replacement skill**.")
+    st.markdown("""
+For a toy conflict, for example, the missing skills may be **requesting, waiting, communicating, sharing, or taking turns**.
+
+**Memory rule:** Don't just stop the behavior — teach the replacement behavior.
+""")
+
+    st.subheader("3. PTKLF")
+    st.write("Think of PTKLF as: **What should young children be developing, and how should adults appropriately support that development?**")
+    st.markdown("""
+Look for developmentally appropriate support of **play, persistence, problem-solving, language, literacy, mathematics, science, social-emotional development, physical development, health, arts, and growing independence**.
+
+When stuck between two answers, ask:
+
+**Which response best helps the child learn, participate, communicate, explore, solve problems, and become increasingly independent?**
+""")
+
+    st.subheader("4. DRDP")
+    st.write("**DRDP = developmental progress over time.**")
+    st.markdown("""
+Think **observe → collect evidence → understand progress → inform planning**.
+
+Strong documentation:
+- “At 10:15, Maya counted six blocks, touching each block once, and said, ‘There are six.’”
+
+Weak documentation:
+- “Maya is very smart at math.”
+
+Choose **specific + observable + factual + objective** evidence rather than labels, opinions, or assumptions.
+""")
+
+    st.subheader("5. Keep the Assessment Tools Straight")
+    st.table({
+        "Tool":["PTKLF","DRDP","CLASS","ASQ","ASQ-SE"],
+        "Quick meaning":[
+            "What young children are learning/developing",
+            "Observe and assess developmental progress",
+            "Quality of classroom interactions",
+            "Developmental screening",
+            "Social-emotional screening"
+        ]
+    })
+    st.warning("**Screening ≠ diagnosis.** A screening may identify a possible concern; it does not by itself establish a diagnosis.")
+    st.markdown("""
+**Memory sentence:**  
+**PTKLF** = WHAT develops • **DRDP** = HOW development is progressing • **CLASS** = INTERACTIONS • **ASQ** = SCREENING • **ASQ-SE** = SOCIAL-EMOTIONAL screening.
+""")
+
+    st.subheader("6. Reading")
+    st.write("Practice workplace-style reading comprehension: **main idea, sequence, what happened first, supported statements, and reasonable conclusions**.")
+    st.success("Answer from the passage — not from what you personally know.")
+
+    st.subheader("7. Writing & Grammar")
+    st.markdown("""
+Prioritize:
+- Subject-verb agreement
+- Verb tense
+- Spelling and punctuation
+- Sentence clarity
+- Professional workplace writing
+- Objective incident documentation
+
+Better: **“At 10:20 a.m., James pushed the chair approximately three feet.”**  
+Weaker: **“James was being terrible again.”**
+""")
+
+    st.subheader("8. Mathematics")
+    st.markdown("""
+Focus on practical fundamentals:
+- Addition and subtraction
+- Multiplication and division
+- Fractions
+- Percentages
+- Ratios
+- Money
+- Elapsed time
+
+Examples: **24 ÷ 6 = 4** • **9/12 = 75%** • **16:4 = 4:1** • **10:15–10:40 = 25 minutes**
+""")
+
+    st.subheader("9. When Two Answers Sound Correct")
+    st.write("Look closely at the question word. If it asks **FIRST**, choose the immediate priority. If it asks **BEST/MOST appropriate**, choose the most professional, developmentally appropriate, respectful, inclusive, and supportive response.")
+    with st.expander("Example: several answers may eventually be correct"):
+        st.write("A child becomes upset and begins throwing blocks.")
+        st.write("Explaining the rule, teaching another way to express frustration, and documenting may all be appropriate later.")
+        st.write("**FIRST:** Ensure the child and other children are safe.")
+
+    st.subheader("10. Exam-Day Memory Sheet")
+    st.markdown("""
+- **FIRST** = immediate priority; when a hazard exists, think safety.
+- **BEST** = developmentally appropriate + respectful + professional.
+- **Behavior problem** = teach a replacement skill.
+- **Child struggling** = scaffold; don't automatically take over.
+- **Observation** = what you saw/heard, not what you think.
+- **Confidential information** = protect it.
+- **Medication / safety / IEP / procedure** = don't guess; follow the authorized procedure.
+- **DRDP** = developmental progress.
+- **CLASS** = classroom interactions.
+- **ASQ** = developmental screening.
+- **ASQ-SE** = social-emotional screening.
+- **Screening is not diagnosis.**
+""")
 
 with study:
     st.header("📚 High-Yield Study Guide")
