@@ -1,35 +1,36 @@
-# California ECE Practice
+# Inglewood IUSD Paraprofessional III – ECE Exam Prep
 
-A GitHub-ready Streamlit study app focused on current California early childhood education themes.
+A targeted Streamlit study app built around the knowledge and abilities listed in the current Inglewood Unified School District Paraprofessional III – Early Childhood Education posting, plus current California PTKLF/DRDP information.
 
 ## Included
-- California ECE study guide
-- 20-question warm-up
-- 50-question mixed test
-- Full question-bank test
+- California PTKLF study
+- DRDP (2025)
+- CLASS concept review
+- ASQ / ASQ-SE concept review
+- Child guidance and classroom scenarios
+- Health, safety, active supervision, confidentiality
+- Reading comprehension
+- Writing and grammar
+- Mathematics
+- 40-question mock exams
+- 20-question final warm-up
 - Topic practice
 - Scenario Challenge
-- Immediate answer explanations
-- Missed-question review
-- Final Review
+- Answer explanations and weak-area summary
 
-## Upload to GitHub
-1. Create a repository such as `California-ECE-Practice`.
-2. Upload `app.py`, `requirements.txt`, `README.md`, and `.gitignore`.
-3. Commit the files.
+All questions are original practice content. This is not an official IUSD or eSkill assessment.
 
-## Deploy with Streamlit Community Cloud
-1. Sign in with GitHub.
-2. Create a new app.
-3. Select your repository.
-4. Branch: `main`
-5. Main file: `app.py`
-6. Deploy.
+## GitHub
+Upload/replace:
+- app.py
+- requirements.txt
+- README.md
+- .gitignore
+
+If your Streamlit deployment already uses the same repository and `app.py`, committing these replacement files should trigger a redeploy.
 
 ## Run locally
 ```bash
 pip install -r requirements.txt
 streamlit run app.py
 ```
-
-This is an independent study aid with original practice questions. It is not an official California Department of Education, Inglewood Unified School District, or testing-vendor examination.
